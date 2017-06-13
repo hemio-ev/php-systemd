@@ -77,5 +77,5 @@ PHP_FUNCTION(sd_notify)
         RETURN_FALSE;
     }
     
-    return sd_notify(unset_environment, state);
+    RETURN_LONG(sd_notify(unset_environment, state));
 }
