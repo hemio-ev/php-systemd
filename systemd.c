@@ -3,10 +3,12 @@
 #endif
 #include "php.h"
 #include "php_systemd.h"
+#include <systemd/sd-daemon.h>
 #include <systemd/sd-journal.h>
 
 zend_function_entry systemd_functions[] = {
     PHP_FE(sd_journal_send, NULL)
+    PHP_FE(sd_notify, NULL)
     {NULL, NULL, NULL} // Sentinel
 };
 
@@ -62,4 +64,18 @@ PHP_FUNCTION(sd_journal_send)
     efree(iov);
     
     RETURN_TRUE;
+}
+
+PHP_FUNCTION(sd_notify)
+{
+    int unset_environment;
+    char *state;
+    int state_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls",
+        &unset_environment, &state, &state_len) != SUCCESS) {
+        RETURN_FALSE;
+    }
+    
+    RETURN_LONG(sd_notify(unset_environment, state));
 }
